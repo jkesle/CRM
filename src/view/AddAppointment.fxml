@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="480.0" prefWidth="621.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AddAppointmentController">
+    <children>
+        <Label layoutX="195.0" layoutY="40.0" prefHeight="27.0" prefWidth="243.0" text="Schedule New Appointment" textFill="#464646">
+            <font>
+                <Font name="System Bold" size="18.0" />
+            </font>
+        </Label>
+        <TextField disable="true" layoutX="140.0" layoutY="112.0" promptText="Auto-generated" />
+        <Label layoutX="108.0" layoutY="116.0" text="ID">
+            <font>
+                <Font name="System Bold Italic" size="12.0" />
+            </font>
+        </Label>
+        <TextField fx:id="titleTF" layoutX="140.0" layoutY="154.0" />
+        <Label layoutX="101.0" layoutY="158.0" text="Title">
+            <font>
+                <Font name="System Bold Italic" size="12.0" />
+            </font>
+        </Label>
+        <TextField fx:id="descTF" layoutX="140.0" layoutY="196.0" />
+        <Label alignment="CENTER_RIGHT" layoutX="52.0" layoutY="200.0" prefHeight="17.0" prefWidth="76.0" text="Description">
+            <font>
+                <Font name="System Bold Italic" size="12.0" />
+            </font>
+        </Label>
+        <TextField fx:id="locationTF" layoutX="140.0" layoutY="238.0" />
+        <Label alignment="CENTER_RIGHT" layoutX="52.0" layoutY="242.0" prefHeight="17.0" prefWidth="76.0" text="Location">
+            <font>
+                <Font name="System Bold Italic" size="12.0" />
+            </font>
+        </Label>
+        <TextField fx:id="typeTF" layoutX="140.0" layoutY="282.0" />
+        <Label alignment="CENTER_RIGHT" layoutX="52.0" layoutY="286.0" prefHeight="17.0" prefWidth="76.0" text="Type">
+            <font>
+                <Font name="System Bold Italic" size="12.0" />
+            </font>
+        </Label>
+        <Label alignment="CENTER_RIGHT" layoutX="4.0" layoutY="328.0" prefHeight="17.0" prefWidth="124.0" text="Start Date">
+            <font>
+                <Font name="System Bold Italic" size="12.0" />
+            </font>
+        </Label>
+        <Label alignment="CENTER_RIGHT" layoutX="13.0" layoutY="371.0" prefHeight="17.0" prefWidth="115.0" text="End Date">
+            <font>
+                <Font name="System Bold Italic" size="12.0" />
+            </font>
+        </Label>
+        <ComboBox fx:id="custIdBox" layoutX="407.0" layoutY="112.0" prefWidth="150.0" />
+        <Label alignment="CENTER_RIGHT" layoutX="304.0" layoutY="116.0" prefHeight="17.0" prefWidth="97.0" text="Customer ID">
+            <font>
+                <Font name="System Bold Italic" size="12.0" />
+            </font>
+        </Label>
+        <ComboBox fx:id="userIdBox" layoutX="407.0" layoutY="167.0" prefWidth="150.0" />
+        <Label alignment="CENTER_RIGHT" layoutX="325.0" layoutY="171.0" prefHeight="17.0" prefWidth="76.0" text="User_ID">
+            <font>
+                <Font name="System Bold Italic" size="12.0" />
+            </font>
+        </Label>
+        <ComboBox fx:id="contactBox" layoutX="407.0" layoutY="215.0" prefWidth="150.0" />
+        <Label alignment="CENTER_RIGHT" layoutX="305.0" layoutY="219.0" prefHeight="17.0" prefWidth="97.0" text="Contact Name">
+            <font>
+                <Font name="System Bold Italic" size="12.0" />
+            </font>
+        </Label>
+        <Button layoutX="341.0" layoutY="432.0" mnemonicParsing="false" onAction="#addAppointment" prefHeight="25.0" prefWidth="97.0" text="Confirm">
+            <font>
+                <Font name="System Bold" size="12.0" />
+            </font>
+        </Button>
+        <Button layoutX="482.0" layoutY="432.0" mnemonicParsing="false" onAction="#returnToMain" prefHeight="25.0" prefWidth="76.0" text="Cancel">
+            <font>
+                <Font name="System Bold" size="12.0" />
+            </font>
+        </Button>
+        <Label fx:id="errorLabel" layoutX="14.0" layoutY="411.0" prefHeight="17.0" prefWidth="598.0" textFill="#eb2121" />
+        <DatePicker fx:id="startDate" layoutX="140.0" layoutY="324.0" prefHeight="25.0" prefWidth="149.0" />
+        <DatePicker fx:id="endDate" layoutX="140.0" layoutY="367.0" prefHeight="25.0" prefWidth="149.0" />
+        <TextField fx:id="startTime" layoutX="379.0" layoutY="324.0" prefHeight="25.0" prefWidth="59.0" promptText="HH:mm" />
+        <TextField fx:id="endTime" layoutX="379.0" layoutY="367.0" prefHeight="25.0" prefWidth="59.0" promptText="HH:mm" />
+        <Label layoutX="312.0" layoutY="328.0" text="Start Time">
+            <font>
+                <Font name="System Bold Italic" size="12.0" />
+            </font>
+        </Label>
+        <Label layoutX="312.0" layoutY="371.0" text="End Time">
+            <font>
+                <Font name="System Bold Italic" size="12.0" />
+            </font>
+        </Label>
+    </children>
+</AnchorPane>

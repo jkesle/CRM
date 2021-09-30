@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="569.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController">
+    <children>
+        <Accordion />
+        <Button fx:id="loginBtn" layoutX="246.0" layoutY="308.0" mnemonicParsing="false" onAction="#login" prefHeight="25.0" prefWidth="78.0" text="Login" />
+        <Label fx:id="locationLabel2" layoutX="107.0" layoutY="369.0" prefHeight="17.0" prefWidth="192.0" />
+        <PasswordField fx:id="passwordTF" layoutX="189.0" layoutY="249.0" prefHeight="25.0" prefWidth="192.0" />
+        <TextField fx:id="userNameTF" layoutX="189.0" layoutY="200.0" prefHeight="25.0" prefWidth="192.0" />
+        <Label fx:id="loginLabel" alignment="CENTER" layoutX="166.0" layoutY="83.0" prefHeight="77.0" prefWidth="238.0" text="Log In">
+            <font>
+                <Font name="System Bold" size="24.0" />
+            </font>
+        </Label>
+        <Label fx:id="locationLabel1" layoutX="14.0" layoutY="369.0" prefHeight="17.0" prefWidth="86.0" />
+        <Label fx:id="errorLabel" alignment="CENTER" layoutX="37.0" layoutY="160.0" prefHeight="17.0" prefWidth="490.0" />
+    </children>
+</AnchorPane>

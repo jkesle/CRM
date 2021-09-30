@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="625.0" prefWidth="1005.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainMenuController">
+    <tabs>
+        <Tab fx:id="dashboardTab" text="Dashboard">
+            <content>
+                <AnchorPane prefHeight="593.0" prefWidth="1000.0" style="-fx-background-color: #f0f0f0;">
+                    <children>
+                        <Pane layoutX="14.0" layoutY="14.0" prefHeight="280.0" prefWidth="649.0" style="-fx-border-color: black; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-background-color: #e3e3e3;">
+                            <children>
+                                <Button layoutX="356.0" layoutY="247.0" mnemonicParsing="false" onAction="#deleteCustomer" style="-fx-background-color: white;" text="Delete">
+                                    <font>
+                                        <Font name="System Bold Italic" size="12.0" />
+                                    </font></Button>
+                                <Button layoutX="167.0" layoutY="247.0" mnemonicParsing="false" onAction="#updateCustomerForm" prefHeight="25.0" prefWidth="147.0" style="-fx-background-color: white;" text="Edit Existing Customer">
+                                    <font>
+                                        <Font name="System Bold Italic" size="12.0" />
+                                    </font></Button>
+                                <Button layoutX="20.0" layoutY="247.0" mnemonicParsing="false" onAction="#addCustomerForm" prefHeight="25.0" prefWidth="127.0" style="-fx-background-color: white;" text="Add New Customer">
+                                    <font>
+                                        <Font name="System Bold Italic" size="12.0" />
+                                    </font></Button>
+                                <TableView fx:id="customerTable" layoutX="20.0" layoutY="17.0" prefHeight="228.0" prefWidth="610.0">
+                                    <columns>
+                                        <TableColumn fx:id="custIdCol" prefWidth="28.0" text="ID" />
+                                        <TableColumn fx:id="nameCol" prefWidth="117.0" text="Customer Name" />
+                                        <TableColumn fx:id="addressCol" prefWidth="106.0" text="Address" />
+                                        <TableColumn fx:id="postalCol" prefWidth="72.0" text="Postal" />
+                                        <TableColumn fx:id="phoneCol" prefWidth="132.0" text="Phone" />
+                                        <TableColumn fx:id="divisionCol" prefWidth="154.0" text="Division" />
+                                    </columns>
+                                </TableView>
+                                <Label alignment="CENTER" layoutX="251.0" prefHeight="17.0" prefWidth="147.0" text="CUSTOMERS">
+                                    <font>
+                                        <Font name="System Bold" size="12.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </Pane>
+                        <Pane layoutX="14.0" layoutY="311.0" prefHeight="268.0" prefWidth="972.0" style="-fx-border-color: black; -fx-background-color: #e3e3e3; -fx-background-radius: 6px; -fx-border-radius: 6px;">
+                            <children>
+                                <Button layoutX="416.0" layoutY="232.0" mnemonicParsing="false" onAction="#deleteAppointment" style="-fx-background-color: white;" text="Delete">
+                                    <font>
+                                        <Font name="System Bold Italic" size="13.0" />
+                                    </font></Button>
+                                <Button layoutX="193.0" layoutY="232.0" mnemonicParsing="false" onAction="#updateAppointmentForm" style="-fx-background-color: white;" text="Edit Existing Appointment">
+                                    <font>
+                                        <Font name="System Bold Italic" size="13.0" />
+                                    </font></Button>
+                                <Button layoutX="16.0" layoutY="232.0" mnemonicParsing="false" onAction="#addAppointmentForm" style="-fx-background-color: white;" text="Add New Appointment">
+                                    <font>
+                                        <Font name="System Bold Italic" size="13.0" />
+                                    </font></Button>
+                                <TableView fx:id="appointmentTable" layoutX="16.0" layoutY="15.0" prefHeight="210.0" prefWidth="935.0" style="-fx-border-radius: 6px; -fx-background-radius: 6px;">
+                                    <columns>
+                                        <TableColumn fx:id="apptIdCol" minWidth="2.0" prefWidth="28.0" text="ID" />
+                                        <TableColumn fx:id="apptTitleCol" prefWidth="88.0" text="Title" />
+                                        <TableColumn fx:id="apptDescriptionCol" prefWidth="92.0" text="Description" />
+                                        <TableColumn fx:id="apptLocationCol" prefWidth="83.0" text="Location" />
+                                        <TableColumn fx:id="apptContactCol" minWidth="7.0" prefWidth="77.0" text="Contact" />
+                                        <TableColumn fx:id="apptTypeCol" minWidth="2.0" prefWidth="140.0" text="Type" />
+                                        <TableColumn fx:id="apptStartCol" prefWidth="150.0" text="Start" />
+                                        <TableColumn fx:id="apptEndCol" prefWidth="142.0" text="End" />
+                                        <TableColumn fx:id="apptCustIdCol" prefWidth="86.0" text="CustomerID" />
+                                        <TableColumn fx:id="apptUserIdCol" prefWidth="48.0" text="UserID" />
+                                    </columns>
+                                </TableView>
+                                <Label alignment="CENTER" layoutX="388.0" prefHeight="17.0" prefWidth="158.0" text="APPOINTMENTS">
+                                    <font>
+                                        <Font name="System Bold" size="12.0" />
+                                    </font>
+                                </Label>
+                                <RadioButton fx:id="monthRadio" layoutX="731.0" layoutY="246.0" mnemonicParsing="false" onAction="#filterAppointments" text="Next 30 Days">
+                                    <font>
+                                        <Font name="System Bold Italic" size="12.0" />
+                                    </font>
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="filters" />
+                                    </toggleGroup>
+                                </RadioButton>
+                                <RadioButton fx:id="weekRadio" layoutX="846.0" layoutY="246.0" mnemonicParsing="false" onAction="#filterAppointments" text="Next 7 Days" toggleGroup="$filters">
+                                    <font>
+                                        <Font name="System Bold Italic" size="12.0" />
+                                    </font>
+                                </RadioButton>
+                                <Label alignment="CENTER" layoutX="723.0" layoutY="227.0" prefHeight="17.0" prefWidth="147.0" text="Filter Appointments By:">
+                                    <font>
+                                        <Font name="System Bold" size="12.0" />
+                                    </font>
+                                </Label>
+                                <RadioButton fx:id="allRadio" layoutX="674.0" layoutY="246.0" mnemonicParsing="false" onAction="#filterByAll" selected="true" text="All" toggleGroup="$filters">
+                                    <font>
+                                        <Font name="System Bold Italic" size="12.0" />
+                                    </font>
+                                </RadioButton>
+                            </children>
+                        </Pane>
+                        <Label layoutX="786.0" layoutY="6.0" text="NOTIFICATIONS">
+                            <font>
+                                <Font name="System Bold" size="12.0" />
+                            </font>
+                        </Label>
+                        <Pane layoutX="678.0" layoutY="23.0" prefHeight="228.0" prefWidth="308.0" style="-fx-background-color: white; -fx-background-radius: 10px; -fx-border-radius: 10px; -fx-border-width: 1px; -fx-border-color: black;">
+                            <children>
+                                <TextFlow fx:id="notificationTextBox" layoutX="8.0" layoutY="9.0" lineSpacing="5.0" prefHeight="210.0" prefWidth="291.0" style="-fx-background-color: white;" />
+                            </children>
+                        </Pane>
+                    </children>
+                </AnchorPane>
+            </content>
+        </Tab>
+        <Tab fx:id="reportsTab" text="Reports">
+            <content>
+                <AnchorPane>
+                    <children>
+                        <TableView fx:id="reportsTable" layoutX="212.0" layoutY="126.0" prefHeight="277.0" prefWidth="579.0">
+                            <columns>
+                                <TableColumn fx:id="reportCol1" prefWidth="75.0" />
+                                <TableColumn fx:id="reportCol2" prefWidth="75.0" />
+                                <TableColumn fx:id="reportCol3" prefWidth="75.0" text="Type" visible="false" />
+                                <TableColumn fx:id="reportCol4" prefWidth="95.0" text="Description" visible="false" />
+                                <TableColumn fx:id="reportCol5" prefWidth="103.0" text="Start" visible="false" />
+                                <TableColumn fx:id="reportCol6" prefWidth="96.0" text="End" visible="false" />
+                                <TableColumn fx:id="reportCol7" prefWidth="59.0" text="CustID" visible="false" />
+                            </columns>
+                        </TableView>
+                        <Label layoutX="34.0" layoutY="20.0" prefHeight="17.0" prefWidth="178.0" text="Select a report to view:">
+                            <font>
+                                <Font name="System Bold Italic" size="15.0" />
+                            </font></Label>
+                        <RadioButton fx:id="appointmentsRadio" layoutX="212.0" layoutY="22.0" mnemonicParsing="false" onAction="#initReportTable" text="Total Appointments by type and month">
+                            <font>
+                                <Font name="System Bold Italic" size="12.0" />
+                            </font>
+                            <toggleGroup>
+                                <ToggleGroup fx:id="report" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="contactRadio" layoutX="212.0" layoutY="84.0" mnemonicParsing="false" onAction="#initReportTable" text="Contact Schedules" toggleGroup="$report">
+                            <font>
+                                <Font name="System Bold Italic" size="12.0" />
+                            </font>
+                        </RadioButton>
+                        <RadioButton fx:id="customersRadio" layoutX="212.0" layoutY="53.0" mnemonicParsing="false" onAction="#initReportTable" text="Total Customers by Divsion" toggleGroup="$report">
+                            <font>
+                                <Font name="System Bold Italic" size="12.0" />
+                            </font>
+                        </RadioButton>
+                        <ComboBox fx:id="monthBox" layoutX="495.0" layoutY="101.0" prefHeight="25.0" prefWidth="99.0" promptText="Month" visible="false" />
+                        <ComboBox fx:id="typeBox" layoutX="607.0" layoutY="101.0" prefHeight="25.0" prefWidth="125.0" promptText="Type" visible="false" />
+                        <ComboBox fx:id="contactBox" layoutX="495.0" layoutY="101.0" prefWidth="150.0" promptText="Contact Name" visible="false" />
+                        <Button layoutX="696.0" layoutY="451.0" mnemonicParsing="false" onAction="#generateReport" text="Generate Report" />
+                        <ComboBox fx:id="divBox" layoutX="495.0" layoutY="101.0" prefWidth="150.0" promptText="Division Name" visible="false" />
+                        <Label fx:id="reportDescLabel" alignment="CENTER_RIGHT" layoutX="12.0" layoutY="126.0" prefHeight="17.0" prefWidth="116.0" />
+                        <Label fx:id="reportValueLabel" layoutX="149.0" layoutY="126.0" prefHeight="17.0" prefWidth="41.0" />
+                    </children></AnchorPane>
+            </content>
+        </Tab>
+    </tabs>
+</TabPane>
