@@ -1,4 +1,4 @@
-# Business Customer/Appointment Scheduler
+# Customer Resource Management System
 
 ## This course includes the following 5 competencies:  
  
