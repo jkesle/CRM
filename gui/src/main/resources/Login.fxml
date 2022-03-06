@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.RadialGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="569.0" style="-fx-background-color: #833ab4,  linear-gradient(#833ab4 0%, #fd1d1d 50%, #fcb045 100%);" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jkesle.crm.controller.LoginController">
+    <children>
+        <Accordion />
+        <Label fx:id="locationLabel2" layoutX="107.0" layoutY="369.0" prefHeight="17.0" prefWidth="192.0" />
+        <PasswordField fx:id="passwordTF" layoutX="189.0" layoutY="249.0" prefHeight="25.0" prefWidth="192.0" promptText="Password" />
+        <TextField fx:id="userNameTF" layoutX="189.0" layoutY="200.0" prefHeight="25.0" prefWidth="192.0" promptText="Username" />
+        <Label fx:id="loginLabel" alignment="CENTER" layoutX="166.0" layoutY="83.0" prefHeight="77.0" prefWidth="238.0" style="-fx-text-fill: #262254;" text="Welcome, Login">
+            <font>
+                <Font name="MS Outlook" size="24.0" />
+            </font>
+        </Label>
+        <Label fx:id="locationLabel1" layoutX="14.0" layoutY="369.0" prefHeight="17.0" prefWidth="86.0" />
+        <Label fx:id="errorLabel" alignment="CENTER" layoutX="37.0" layoutY="160.0" prefHeight="17.0" prefWidth="490.0" />
+      <JFXButton fx:id="loginBtn" layoutX="242.0" layoutY="304.0" onAction="#login" prefHeight="35.0" prefWidth="86.0" style="-fx-background-color: white;" text="Login">
+         <ripplerFill>
+            <RadialGradient centerX="0.5" centerY="0.5227272871768835" focusDistance="0.03669730020225592" radius="0.7568807514435654">
+               <stops>
+                  <Stop>
+                     <color>
+                        <Color red="1.0" green="0.16296295821666718" blue="0.16296295821666718" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.5176651305683565">
+                     <color>
+                        <Color red="0.7697238326072693" green="0.08931773900985718" blue="0.8315789699554443" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.935483870967742">
+                     <color>
+                        <Color red="0.7789473533630371" green="0.005769980605691671" blue="0.08308771997690201" />
+                     </color>
+                  </Stop>
+                  <Stop offset="1.0">
+                     <color>
+                        <Color red="0.7789473533630371" green="0.005769980605691671" blue="0.08308771997690201" />
+                     </color>
+                  </Stop>
+               </stops>
+            </RadialGradient>
+         </ripplerFill></JFXButton>
+    </children>
+</AnchorPane>
