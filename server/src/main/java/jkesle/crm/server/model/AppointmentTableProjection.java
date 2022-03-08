@@ -31,6 +31,6 @@ public interface AppointmentTableProjection {
     @Value("#{target.getContact().getContactName()}")
     public String getContactName();
 
-    @Value("{#target.getUser().getUserId()}")
+    @Value("#{target.getUser().getUserId()}")
     public int getUserId();
 }

@@ -1,169 +1,162 @@
-// package jkesle.crm.controller;
+package jkesle.crm.controller;
 
-// import jkesle.crm.helper.JDBC;
-// import javafx.collections.FXCollections;
-// import javafx.collections.ObservableList;
-// import javafx.fxml.FXML;
-// import javafx.fxml.FXMLLoader;
-// import javafx.scene.Node;
-// import javafx.scene.Parent;
-// import javafx.scene.Scene;
-// import javafx.scene.control.*;
-// import javafx.stage.Stage;
-// import jkesle.crm.model.User;
-// import javafx.event.ActionEvent;
-// import java.io.IOException;
-// import java.sql.ResultSet;
-// import java.sql.SQLException;
-// import java.sql.Statement;
-// import java.time.Instant;
-// import java.time.LocalDateTime;
-// import java.time.ZoneOffset;
-// import java.time.format.DateTimeFormatter;
-// import java.util.function.UnaryOperator;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.stage.Stage;
+import jkesle.crm.api.country.CountryApi.CountryGET;
+import jkesle.crm.api.division.DivisionApi.DivisionGET;
+import jkesle.crm.dto.CountryDTO;
+import jkesle.crm.dto.DivisionDTO;
+import jkesle.crm.parser.country.CountryResponseParser;
+import jkesle.crm.parser.country.json.CountryJsonParser;
+import jkesle.crm.parser.division.DivisionResponseParser;
+import jkesle.crm.parser.division.json.DivisionJsonParser;
+import javafx.event.ActionEvent;
+import javafx.event.EventType;
 
-// /**
-//  * Controller for the AddCustomer form
-//  *
-//  * @author Joshua Kesler
-//  */
-// public class AddCustomerController {
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 
-//     @FXML
-//     private TextField nameField;
+import javax.swing.ComboBoxModel;
 
-//     @FXML
-//     private TextField addressField;
+import com.google.gson.JsonElement;
 
-//     @FXML
-//     private TextField postalField;
+/**
+ * Controller for the AddCustomer form
+ *
+ * @author Joshua Kesler
+ */
+public class AddCustomerController {
 
-//     @FXML
-//     private TextField phoneField;
+    private DivisionResponseParser<JsonElement> divisionParser = new DivisionJsonParser();
 
-//     @FXML
-//     private ComboBox countryBox;
+    private CountryResponseParser<JsonElement> countryParser = new CountryJsonParser();
 
-//     @FXML
-//     private ComboBox divisionBox;
+    @FXML
+    private TextField nameField;
 
-//     @FXML
-//     private Label errorLabel;
+    @FXML
+    private TextField addressField;
 
+    @FXML
+    private TextField postalField;
 
-//     @FXML
-//     private void returnToMain(ActionEvent event) throws IOException {
-//         Parent root = FXMLLoader.load(getClass().getResource("../view/MainMenu.fxml"));
-//         Stage mainForm = (Stage) ((Node) event.getSource()).getScene().getWindow();
-//         mainForm.setScene(new Scene(root));
-//         mainForm.show();
-//     }
+    @FXML
+    private TextField phoneField;
 
+    @FXML
+    private ComboBox<CountryDTO> countryBox;
 
+    @FXML
+    private ComboBox<DivisionDTO> divisionBox;
 
-
-//     @FXML
-//     private void formatName() {
-//         UnaryOperator< TextFormatter.Change > filter = change -> {
-//             String text = change.getText();
-
-//             if (text.matches("[A-Za-z ]*")) {
-//                 return change;
-//             }
-
-//             return null;
-//         };
-//         nameField.setTextFormatter(new TextFormatter < String > (filter));
-//     }
-
-//     /**
-//      * checks if TextField is empty
-//      *
-//      * @param tf TextField to be checked
-//      * @return <code>true</code> if empty, <code>false</code> if not empty
-//      */
-//     public boolean checkForBlank(TextField tf) {
-//         return tf.getText().trim() == null || tf.getText().trim().isBlank();
-//     }
-
-//     /**
-//      *{@return <code>true</code> if any of the TextFields are empty} Sets the <code>errorLabel</code>
-//      * accordingly
-//      */
-//     public boolean checkEmptyFields() {
-//         errorLabel.setText("");
-//         TextField[] fields = {nameField, addressField, postalField, phoneField};
-//         ComboBox[] combos = {countryBox, divisionBox};
-//         String[] errors = {"Name", "Address", "Postal", "Phone", "Country", "Division"};
-//         boolean foundError = false;
-//         for (int k = 0; k < 6; k++) {
-//             if(k < 4 && checkForBlank(fields[k])) {
-//                 errorLabel.setText(errorLabel.getText() + errors[k] + ", ");
-//                 foundError = true;
-//             } else if(k == 4 && combos[0].getSelectionModel().isEmpty()) {
-//                 errorLabel.setText(errorLabel.getText() + errors[k] + ", ");
-//                 foundError = true;
-//             } else if(k==5 && combos[1].getSelectionModel().isEmpty()) {
-//                 errorLabel.setText(errorLabel.getText() + errors[k] + ", ");
-//                 foundError = true;
-//             }
-//         }
-//         if(foundError) {
-//             errorLabel.setText(errorLabel.getText() + "field(s) were left blank." );
-//         }
-//         return foundError;
-//     }
+    @FXML
+    private Label errorLabel;
 
 
-//     /**
-//      * fills the <code>divisionBox</code> according to the country selected in
-//      * the <code>countryBox</code>
-//      *
-//      * @throws SQLException if error occurs during database connection or query execution
-//      */
-//     public void populateDivisionBox() throws SQLException {
-//         divisionBox.setValue(null);
-//         int countryId = -1;
-//         ObservableList<String> items = FXCollections.observableArrayList();
-//         Statement statement = JDBC.getConnection().createStatement();
-//         String query;
-//         try {
-//             if (countryBox.getValue() == null) query = "SELECT Division from first_level_divisions;";
-//             else {
-//                 switch (countryBox.getValue().toString()) {
-//                     case "United States":
-//                         countryId = 1;
-//                         break;
-//                     case "United Kingdom":
-//                         countryId = 2;
-//                         break;
-//                     case "Canada":
-//                         countryId = 3;
-//                         break;
-//                 }
-//                 query = "SELECT Division from first_level_divisions WHERE Country_ID = " + countryId + ";";
-//             }
-//             ResultSet rs = statement.executeQuery(query);
-//             while (rs.next()) {
-//                 items.add(rs.getString("Division"));
-//             }
-//             divisionBox.setItems(items);
-//         } catch (SQLException e) {
-//             System.out.println(e.getMessage());
-//         }
-//     }
+    @FXML
+    private void returnToMain(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("MainMenu.fxml"));
+        Stage mainForm = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        mainForm.setScene(new Scene(root));
+        mainForm.show();
+    }
 
-//     /**
-//      * fills the <code>countryBox</code> with the three available countries
-//      * in the database
-//      */
-//     public void populateCountryBox() {
-//         ObservableList<String> countries = FXCollections.observableArrayList();
-//         countries.add("United States");
-//         countries.add("United Kingdom");
-//         countries.add("Canada");
-//         countryBox.setItems(countries);
-//     }
+
+
+
+    @FXML
+    private void formatName() {
+        UnaryOperator<TextFormatter.Change> filter = change -> {
+            String text = change.getText();
+
+            if (text.matches("[A-Za-z ]*")) {
+                return change;
+            }
+
+            return null;
+        };
+        nameField.setTextFormatter(new TextFormatter <String> (filter));
+    }
+
+    /**
+     * checks if TextField is empty
+     *
+     * @param tf TextField to be checked
+     * @return <code>true</code> if empty, <code>false</code> if not empty
+     */
+    public boolean checkForBlank(TextField tf) {
+        return tf.getText().trim() == null || tf.getText().trim().isBlank();
+    }
+
+    /**
+     *{@return <code>true</code> if any of the TextFields are empty} Sets the <code>errorLabel</code>
+     * accordingly
+     */
+    public boolean checkEmptyFields() {
+        errorLabel.setText("");
+        TextField[] fields = {nameField, addressField, postalField, phoneField};
+        ComboBox[] combos = {countryBox, divisionBox};
+        String[] errors = {"Name", "Address", "Postal", "Phone", "Country", "Division"};
+        boolean foundError = false;
+        for (int k = 0; k < 6; k++) {
+            if(k < 4 && checkForBlank(fields[k])) {
+                errorLabel.setText(errorLabel.getText() + errors[k] + ", ");
+                foundError = true;
+            } else if(k == 4 && combos[0].getSelectionModel().isEmpty()) {
+                errorLabel.setText(errorLabel.getText() + errors[k] + ", ");
+                foundError = true;
+            } else if(k==5 && combos[1].getSelectionModel().isEmpty()) {
+                errorLabel.setText(errorLabel.getText() + errors[k] + ", ");
+                foundError = true;
+            }
+        }
+        if(foundError) {
+            errorLabel.setText(errorLabel.getText() + "field(s) were left blank." );
+        }
+        return foundError;
+    }
+
+    /**
+     * fills the <code>countryBox</code> with the three available countries
+     * in the database
+     * @throws Exception
+     */
+    public void populateCountryBox() throws Exception {
+        ObservableList<CountryDTO> countries = FXCollections.observableArrayList();
+        CountryGET.doGETCountries()
+            .thenApplyAsync(res -> countryParser.getCountriesFromResponse(res.body()))
+            .thenAcceptAsync(arr -> arr.getAsJsonArray().forEach(c -> countries.add(countryParser.getCountryDTO(c))))
+            .join();
+        countryBox.setItems(countries);
+        countryBox.setCellFactory(list -> new ListCell<CountryDTO>() {
+            protected void updateItem(CountryDTO item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null) {
+                    setText(null);
+                } else {
+                    setText(item.getCountryName());
+                }
+            };
+        });
+    }
 
 //     /**
 //      * adds a new customer to the database and moves application
@@ -212,14 +205,41 @@
 //         return divisionId;
 //     }
 
-//     /**
-//      * initializes the ComboBoxes in the AddCustomer form
-//      *
-//      * @throws SQLException if error occurs during database connection or query execution.
-//      */
-//     public void initialize() throws SQLException {
-//         formatName();
-//         populateCountryBox();
-//         populateDivisionBox();
-//     }
-// }
+    /**
+     * initializes the ComboBoxes in the AddCustomer form
+     * @throws Exception
+     *
+     * @throws SQLException if error occurs during database connection or query execution.
+     */
+    public void initialize() throws Exception {
+        formatName();
+        populateCountryBox();
+        countryBox.setOnAction(event -> {
+            try {
+                divisionBox.setItems(getDivisionsByCountry());
+            } catch (URISyntaxException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        });
+        divisionBox.setCellFactory(list -> new ListCell<DivisionDTO>() {
+                protected void updateItem(DivisionDTO item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null) {
+                        setText(null);
+                    } else {
+                        setText(item.getDivisionName());
+                    }
+                };
+            });
+    }
+
+    private ObservableList<DivisionDTO> getDivisionsByCountry() throws URISyntaxException {
+        ObservableList<DivisionDTO> list = FXCollections.observableArrayList();
+        DivisionGET.doGETDivisionsByCountry(countryBox.getSelectionModel().getSelectedItem().getCountryId())
+        .thenApplyAsync(res -> divisionParser.getDivisionsFromResponse(res.body()).getAsJsonArray())
+        .thenAcceptAsync(arr -> arr.forEach(d -> list.add(divisionParser.getDivisionDTO(d))))
+        .join();
+        return list;
+    }
+}

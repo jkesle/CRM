@@ -8,10 +8,10 @@ public class AppointmentDTO {
     private String appointmentTitle;
     private String appointmentDescription;
     private String appointmentLocation;
-    private Timestamp appointmentStartDatetime;
-    private Timestamp appointmentEndDatetime;
+    private String appointmentStartDatetime;
+    private String appointmentEndDatetime;
     private int contactId;
-    private int contactName;
+    private String contactName;
     private int customerId;
     private int userId;
 
@@ -47,22 +47,22 @@ public class AppointmentDTO {
     public void setAppointmentLocation(String appointmentLocation) {
         this.appointmentLocation = appointmentLocation;
     }
-    public Timestamp getAppointmentStartDatetime() {
+    public String getAppointmentStartDatetime() {
         return appointmentStartDatetime;
     }
-    public void setAppointmentStartDatetime(Timestamp appointmentStartDatetime) {
+    public void setAppointmentStartDatetime(String appointmentStartDatetime) {
         this.appointmentStartDatetime = appointmentStartDatetime;
     }
-    public Timestamp getAppointmentEndDatetime() {
+    public String getAppointmentEndDatetime() {
         return appointmentEndDatetime;
     }
-    public void setAppointmentEndDatetime(Timestamp appointmentEndDatetime) {
+    public void setAppointmentEndDatetime(String appointmentEndDatetime) {
         this.appointmentEndDatetime = appointmentEndDatetime;
     }
-    public int getContactName() {
+    public String getContactName() {
         return contactName;
     }
-    public void setContactName(int contactName) {
+    public void setContactName(String contactName) {
         this.contactName = contactName;
     }
     public int getContactId() {

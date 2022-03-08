@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -17,16 +18,27 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import jkesle.crm.api.appointment.AppointmentApi;
+import jkesle.crm.api.appointment.AppointmentApi.AppointmentDELETE;
+import jkesle.crm.api.appointment.AppointmentApi.AppointmentGET;
 import jkesle.crm.api.customer.CustomerApi;
+import jkesle.crm.api.customer.CustomerApi.CustomerDELETE;
+import jkesle.crm.api.customer.CustomerApi.CustomerGET;
 import jkesle.crm.dto.AppointmentDTO;
 import jkesle.crm.dto.CustomerDTO;
+import jkesle.crm.parser.appointment.AppointmentResponseParser;
+import jkesle.crm.parser.appointment.json.AppointmentJsonParser;
+import jkesle.crm.parser.customer.CustomerResponseParser;
+import jkesle.crm.parser.customer.json.CustomerJsonParser;
 
 import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.*;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.google.gson.JsonElement;
 
 /**
  * Controller for the MainMenu form
@@ -35,9 +47,10 @@ import java.util.Optional;
  */
 public class MainMenuController {
 
-    private final CustomerApi custApi = new CustomerApi();
+    private CustomerResponseParser<JsonElement> custParser = new CustomerJsonParser();
 
-    private final AppointmentApi apptApi = new AppointmentApi();
+    private AppointmentResponseParser<JsonElement> apptParser = new AppointmentJsonParser();
+
 
     @FXML
     private TableView<CustomerDTO> customerTable;
@@ -61,7 +74,7 @@ public class MainMenuController {
     private TableColumn divisionCol;
 
     @FXML
-    private TableView appointmentTable;
+    private TableView<AppointmentDTO> appointmentTable;
 
     @FXML
     private TableColumn apptIdCol;
@@ -156,24 +169,18 @@ public class MainMenuController {
     @FXML
     private Label reportDescLabel;
 
-//     /**
-//      * {@return selected <code>Appointment</code>} Used by modify pages
-//      * and delete functions.
-//      */
-//     public static Appointment getSelectedAppointment() { return  selectedAppointment; }
-
-//     /**
-//      * Changes scene from main menu to the AddCustomer page.
-//      *
-//      * @param event   <code>ActionEvent</code> triggered by "add customer" button.
-//      * @throws IOException  if an error occurs during input or output.
-//      */
-//     public void addCustomerForm(ActionEvent event) throws IOException {
-//         Parent root = FXMLLoader.load(getClass().getResource("../view/AddCustomer.fxml"));
-//         Stage addCustomerStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-//         addCustomerStage.setScene(new Scene(root));
-//         addCustomerStage.show();
-//     }
+    /**
+     * Changes scene from main menu to the AddCustomer page.
+     *
+     * @param event   <code>ActionEvent</code> triggered by "add customer" button.
+     * @throws IOException  if an error occurs during input or output.
+     */
+    public void addCustomerForm(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("AddCustomer.fxml"));
+        Stage addCustomerStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        addCustomerStage.setScene(new Scene(root));
+        addCustomerStage.show();
+    }
 //     /**
 //      * Changes scene from main menu to the UpdateCustomer page.
 //      *
@@ -193,6 +200,7 @@ public class MainMenuController {
 //         updateCustomerStage.setScene(new Scene(root));
 //         updateCustomerStage.show();
 //     }
+//
 //     /**
 //      * Changes scene from main menu to the AddAppointment page.
 //      *
@@ -225,71 +233,84 @@ public class MainMenuController {
 //         updateAppointmentStage.show();
 //     }
 
-//     /**
-//      * Removes an <code>Appointment</code> from the database
-//      * and the <code>allAppointments</code> array list.
-//      *
-//      * @throws SQLException  if error occurs with database connection or query execution.
-//      */
-//     public void deleteAppointment() throws SQLException {
-//         selectedAppointment = (Appointment) appointmentTable.getSelectionModel().getSelectedItem();
-//         if (selectedAppointment == null) {
-//             Alert alert = new Alert(Alert.AlertType.ERROR);
-//             alert.setHeaderText("Select an appointment to delete first");
-//             alert.showAndWait();
-//             return;
-//         }
-//         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-//         confirm.setHeaderText("Are you sure you'd like to delete this appointment?");
-//         Optional<ButtonType> res = confirm.showAndWait();
-//         if (res.get() == ButtonType.OK) {
-//             Statement statement = JDBC.getConnection().createStatement();
-//             String query = "DELETE FROM appointments where Appointment_ID = '" + selectedAppointment.getAppointmentId() + "';";
-//             statement.executeUpdate(query);
-//             Alert info = new Alert(Alert.AlertType.INFORMATION);
-//             info.setHeaderText("Appointment " + selectedAppointment.getAppointmentId() + " has been deleted");
-//             allAppointments.remove(selectedAppointment);
-//             info.showAndWait();
-//             filterByAll();
-//         } else return;
-//     }
+    /**
+     * Removes an <code>Appointment</code> from the database
+     * and the <code>allAppointments</code> array list.
+     * @throws Exception
+     */
+    public void deleteAppointment() throws Exception {
+        AppointmentDTO selectedAppointment = appointmentTable.getSelectionModel().getSelectedItem();
 
-//     /**
-//      * Removes a <code>Customer</code> from the database
-//      * and the <code>allCustomers</code> array list.
-//      *
-//      * @throws SQLException  if error occurs with database connection or query execution.
-//      */
-//     public void deleteCustomer() throws SQLException {
-//         selectedCustomer = customerTable.getSelectionModel().getSelectedItem();
-//         if(selectedCustomer == null) {
-//             Alert alert = new Alert(Alert.AlertType.ERROR);
-//             alert.setHeaderText("Select a customer to delete first");
-//             alert.showAndWait();
-//             return;
-//         }
-//         if (selectedCustomer.checkAppointments()) {
-//             Alert warning = new Alert(Alert.AlertType.ERROR);
-//             warning.setHeaderText("This customer has 1 or more appointments associated with it. Update them before deletion");
-//             warning.showAndWait();
-//             return;
-//         } else {
-//             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-//             confirm.setHeaderText("Are you sure you'd like to delete this customer?");
-//             Optional<ButtonType> res = confirm.showAndWait();
-//             if (res.get() == ButtonType.OK) {
-//                 Statement statement = JDBC.getConnection().createStatement();
-//                 String query = "DELETE FROM customers where Customer_ID = '" + selectedCustomer.getCustomerId() + "'; " +
-//                         "ALTER TABLE customers AUTO_INCREMENT = 1;";
-//                 statement.executeUpdate(query);
-//                 Alert info = new Alert(Alert.AlertType.INFORMATION);
-//                 info.setHeaderText("Customer " + selectedCustomer.getName() + " has been deleted");
-//                 allCustomers.remove(selectedCustomer);
-//                 info.showAndWait();
-//                 customerTable.setItems(allCustomers);
-//             } else return;
-//         }
-//     }
+        if (selectedAppointment == null) {
+            makeAlert("Select an Appointment to delete first", AlertType.ERROR)
+            .showAndWait();
+            return;
+        }
+
+        Optional<ButtonType> res = makeAlert(String.format("Are you sure you'd like to delete appointment with ID: %s", selectedAppointment.getAppointmentId()), AlertType.INFORMATION)
+        .showAndWait();
+
+        if (res.get() == ButtonType.OK) {
+            int status = AppointmentDELETE.doAppointmentDELETE(selectedAppointment.getAppointmentId()).join().statusCode();
+
+            if (status != 204) {
+                makeAlert("There was an error deleting the appointment from the database", AlertType.ERROR)
+                .showAndWait();
+                return;
+            }
+
+            Alert alert = makeAlert(String.format("Appointment %s was deleted successfully", selectedAppointment.getAppointmentId()), AlertType.INFORMATION);
+            constructAppointmentTable();
+            alert.showAndWait();
+        }
+    }
+
+    /**
+     * Removes a <code>Customer</code> from the database
+     * and the <code>allCustomers</code> array list.
+     * @throws Exception
+     */
+    public void deleteCustomer() throws Exception {
+        CustomerDTO selectedCustomer = customerTable.getSelectionModel().getSelectedItem();
+        List<AppointmentDTO> apptsForCustomer = new ArrayList<>();
+
+        if(selectedCustomer == null) {
+            makeAlert("Select a customer to delete first", AlertType.ERROR)
+            .showAndWait();
+            return;
+        }
+
+        AppointmentGET.doGETAppointmentsByCustomer(selectedCustomer.getCustomerId())
+        .thenApplyAsync(res -> apptParser.getAppointmentsFromResponse(res.body().toString()))
+        .thenAcceptAsync(arr -> arr.getAsJsonArray().forEach(a -> apptsForCustomer.add(apptParser.getAppointmentDTO(a))))
+        .join();
+
+
+        if (!apptsForCustomer.isEmpty()) {
+            makeAlert(String.format("Customer with ID: %s has %s appointments still scheduled. Delete them before proceeding",
+                selectedCustomer.getCustomerId(), apptsForCustomer.size()), AlertType.ERROR)
+                .showAndWait();
+            return;
+        }
+
+        Optional<ButtonType> res = makeAlert(String.format("Are you sure you'd like to delete customer %s?",
+            selectedCustomer.getCustomerId()), AlertType.INFORMATION).showAndWait();
+
+        if (res.get() == ButtonType.OK) {
+
+            int status = CustomerDELETE.doCustomerDELETE(selectedCustomer.getCustomerId()).join().statusCode();
+
+            if (status != 204) {
+                makeAlert("There was an error removing the Customer from the database", AlertType.ERROR)
+                .showAndWait();
+                return;
+            }
+
+            Alert alert = makeAlert("Customer has been deleted", AlertType.INFORMATION);
+            constructCustomerTable();
+            alert.showAndWait();
+        }
+    }
 
 //     /**
 //      * Constructs the <code>allCustomers</code> array and
@@ -300,7 +321,10 @@ public class MainMenuController {
 //      */
     public void constructCustomerTable() throws Exception {
         ObservableList<CustomerDTO> customers = FXCollections.observableArrayList();
-        customers.addAll(custApi.doGETCustomers());
+        CustomerGET.doGETCustomers()
+        .thenApplyAsync(res -> custParser.getCustomersFromResponse(res.body().toString()))
+        .thenAcceptAsync(arr -> arr.getAsJsonArray().forEach(c -> customers.add(custParser.getCustomerDTO(c))))
+        .join();
         customerTable.setItems(customers);
     }
 
@@ -312,7 +336,10 @@ public class MainMenuController {
 //      */
     public void constructAppointmentTable() throws Exception {
         ObservableList<AppointmentDTO> appointments = FXCollections.observableArrayList();
-        appointments.addAll(apptApi.doGETAppointments());
+        AppointmentGET.doGETAppointments()
+        .thenApplyAsync(res -> apptParser.getAppointmentsFromResponse(res.body().toString()))
+        .thenAcceptAsync(arr -> arr.getAsJsonArray().forEach(a -> appointments.add(apptParser.getAppointmentDTO(a))))
+        .join();
         appointmentTable.setItems(appointments);
     }
 
@@ -384,232 +411,21 @@ public class MainMenuController {
 //         }
 //     }
 
-//     /**
-//      * initializes the report table that is used to display multiple reports.
-//      *
-//      * @throws SQLException if error occurs during database connection or query execution.
-//      */
-//     public void initReportTable() throws SQLException {
-//         reportValueLabel.setText("");
-//         reportDescLabel.setText("");
-//         reportsTable.setItems(null);
-//         if (appointmentsRadio.isSelected()) {
-//             hiddenColumnsController(false);
-//             hiddenBoxController();
-//             populateMonthBox();
-//             populateTypeBox();
-//             monthBox.getSelectionModel().select(0);
-//             typeBox.getSelectionModel().select(0);
-//             reportCol1.setText("Type");
-//             reportCol2.setText("Time");
-//             reportCol1.setCellValueFactory(new PropertyValueFactory("type"));
-//             reportCol2.setCellValueFactory(new PropertyValueFactory("startTimeAdjusted"));
-//         } else if (customersRadio.isSelected()) {
-//             hiddenColumnsController(false);
-//             hiddenBoxController();
-//             populateDivisionBox();
-//             divBox.getSelectionModel().select(0);
-//             reportCol1.setText("Customer ID");
-//             reportCol2.setText("Division");
-//             reportCol1.setCellValueFactory(new PropertyValueFactory("customerId"));
-//             reportCol2.setCellValueFactory(new PropertyValueFactory("divisionName"));
-//         } else if (contactRadio.isSelected()) {
-//             hiddenColumnsController(true);
-//             hiddenBoxController();
-//             populateContactBox();
-//             contactBox.getSelectionModel().select(0);
-//             reportCol1.setText("Appointment ID");
-//             reportCol2.setText("Title");
-//             reportCol1.setCellValueFactory(new PropertyValueFactory("appointmentId"));
-//             reportCol2.setCellValueFactory(new PropertyValueFactory("title"));
-//             reportCol3.setCellValueFactory(new PropertyValueFactory("type"));
-//             reportCol4.setCellValueFactory(new PropertyValueFactory("description"));
-//             reportCol5.setCellValueFactory(new PropertyValueFactory("startTimeAdjusted"));
-//             reportCol6.setCellValueFactory(new PropertyValueFactory("endTimeAdjusted"));
-//             reportCol7.setCellValueFactory(new PropertyValueFactory("customerId"));
-//         }
-//     }
 
-//     /**
-//      * generates a report based on "month" and "type" chosen by the user
-//      */
-//     public void typeAndMonthReport() {
-//         reportsTypeAndMonth.clear();
-//         for (Appointment appt : allAppointments) {
-//             if (appt.getType().equals(typeBox.getSelectionModel().getSelectedItem().toString())) {
-//                 if (appt.getStartTimeAdjusted().toLocalDateTime().toLocalDate().getMonth().toString()
-//                         .equals(monthBox.getSelectionModel().getSelectedItem().toString().toUpperCase())) {
-
-//                     reportsTypeAndMonth.add(appt);
-//                 }
-//             }
-//         }
-//         reportsTable.setItems(reportsTypeAndMonth);
-//         reportDescLabel.setText("Total Appointments:");
-//         reportValueLabel.setText(String.valueOf(reportsTypeAndMonth.size()));
-
-//     }
-
-//     /**
-//      * generates a report based on division selected by the user
-//      */
-//     public void customerDivisionReport() {
-//         customerDivisionReport.clear();
-//         for (Customer cust : allCustomers) {
-//             if(cust.getDivisionName().equals(divBox.getSelectionModel().getSelectedItem().toString() )) {
-//                 customerDivisionReport.add(cust);
-//             }
-//         }
-//         reportsTable.setItems(customerDivisionReport);
-//         reportDescLabel.setText("Total Customers:");
-//         reportValueLabel.setText(String.valueOf(customerDivisionReport.size()));
-//     }
-
-//     /**
-//      * generates a schedule for a contact selected by the user
-//      */
-//     public void contactScheduleReport() {
-//         contactScheduleReport.clear();
-//         for (Appointment appt : allAppointments) {
-//             if (appt.getContactName().equals(contactBox.getSelectionModel().getSelectedItem().toString())) {
-//                 contactScheduleReport.add(appt);
-//             }
-//         }
-//         reportsTable.setItems(contactScheduleReport);
-//         reportDescLabel.setText("Total Appointments");
-//         reportValueLabel.setText(String.valueOf(contactScheduleReport.size()));
-//     }
-
-//     /**
-//      * selects the report to generate based on the radio button selected
-//      */
-//     public void generateReport() {
-//         if(appointmentsRadio.isSelected()) {
-//             typeAndMonthReport();
-//             return;
-//         } else if (customersRadio.isSelected()) {
-//             customerDivisionReport();
-//             return;
-//         } else if (contactRadio.isSelected()) {
-//             contactScheduleReport();
-//             return;
-//         }
-//     }
-
-//     /**
-//      * controls the visibility of the columns used
-//      * only by the contact schedule report
-//      *
-//      * @param option <code>true</code> for visibility, <code>false</code>
-//      *               for hidden
-//      */
-//     public void hiddenColumnsController(boolean option) {
-//         reportCol3.setVisible(option);
-//         reportCol4.setVisible(option);
-//         reportCol5.setVisible(option);
-//         reportCol6.setVisible(option);
-//         reportCol7.setVisible(option);
-
-//     }
-
-//     /**
-//      * controls the visibility of ComboBoxes associated with different reports
-//      */
-//     public void hiddenBoxController() {
-//         boolean appt = false;
-//         boolean division = false;
-//         boolean contact = false;
-//         if (appointmentsRadio.isSelected()) appt = true;
-//         if (customersRadio.isSelected()) division = true;
-//         if (contactRadio.isSelected()) contact = true;
-//         monthBox.setVisible(appt);
-//         typeBox.setVisible(appt);
-//         contactBox.setVisible(contact);
-//         divBox.setVisible(division);
-//     }
-
-//     /**
-//      * fills <code>divBox</code> with a list of all available divisions from database
-//      *
-//      * @throws SQLException if error occurs during database connection or query execution
-//      */
-//     public void populateDivisionBox() throws SQLException {
-//         ObservableList<String> items = FXCollections.observableArrayList();
-//         Statement statement = JDBC.getConnection().createStatement();
-//         String query = "SELECT Division from first_level_divisions;";
-//         ResultSet rs = statement.executeQuery(query);
-//         while (rs.next()) {
-//             items.add(rs.getString("Division"));
-//         }
-//         divBox.setItems(items);
-//     }
-
-//     /**
-//      * fills <code>monthBox</code> with the months of the year
-//      */
-//     public void populateMonthBox() {
-//         ObservableList<String> months = FXCollections.observableArrayList();
-//         months.add("January");
-//         months.add("February");
-//         months.add("March");
-//         months.add("April");
-//         months.add("May");
-//         months.add("June");
-//         months.add("July");
-//         months.add("August");
-//         months.add("September");
-//         months.add("October");
-//         months.add("November");
-//         months.add("December");
-//         monthBox.setItems(months);
-//     }
-
-//     /**
-//      * fills <code>typeBox</code> with all distinct "type" values from the
-//      * appointments table in the database
-//      *
-//      * @throws SQLException if error occurs during database connection or
-//      * query execution
-//      */
-//     public void populateTypeBox() throws SQLException {
-//         ObservableList<String> types = FXCollections.observableArrayList();
-//         Statement statement = JDBC.getConnection().createStatement();
-//         String query = "SELECT DISTINCT Type AS Type from appointments;";
-//         ResultSet rs = statement.executeQuery(query);
-//         while (rs.next()) {
-//             types.add(rs.getString("Type"));
-//         }
-//         typeBox.setItems(types);
-//     }
-
-//     /**
-//      * fills <code>contactBox</code> with all distinct "contact" values from the
-//      * appointments table in the database
-//      *
-//      * @throws SQLException if error occurs during database connection or
-//      * query execution
-//      */
-//     public void populateContactBox() throws SQLException {
-//         ObservableList<String> contacts = FXCollections.observableArrayList();
-//         Statement statement = JDBC.getConnection().createStatement();
-//         String query = "SELECT DISTINCT Contact_Name AS Contact from contacts;";
-//         ResultSet rs = statement.executeQuery(query);
-//         while (rs.next()) {
-//             contacts.add(rs.getString("Contact"));
-//         }
-//         contactBox.setItems(contacts);
-//     }
-
+        private Alert makeAlert(String message, AlertType type) {
+            Alert alert = new Alert(type);
+            alert.setHeaderText(message);
+            return alert;
+        }
 //     /**
 //      * initializes the customers and appointments tables
 //      * @throws SQLException
 //      */
-    public void initialize() throws Exception {
+        public void initialize() throws Exception {
         custIdCol.setCellValueFactory(new PropertyValueFactory("customerId"));
         nameCol.setCellValueFactory(new PropertyValueFactory("customerName"));
         addressCol.setCellValueFactory(new PropertyValueFactory("customerAddress"));
         phoneCol.setCellValueFactory(new PropertyValueFactory("customerPhone"));
-        postalCol.setCellValueFactory(new PropertyValueFactory("postal"));
         divisionCol.setCellValueFactory(new PropertyValueFactory("division"));
         apptIdCol.setCellValueFactory(new PropertyValueFactory("appointmentId"));
         apptTitleCol.setCellValueFactory(new PropertyValueFactory("appointmentTitle"));
@@ -617,8 +433,8 @@ public class MainMenuController {
         apptLocationCol.setCellValueFactory(new PropertyValueFactory("appointmentLocation"));
         apptContactCol.setCellValueFactory(new PropertyValueFactory("contactName"));
         apptTypeCol.setCellValueFactory(new PropertyValueFactory("appointmentType"));
-        apptStartCol.setCellValueFactory(new PropertyValueFactory("startTimeAdjusted"));
-        apptEndCol.setCellValueFactory(new PropertyValueFactory("endTimeAdjusted"));
+        apptStartCol.setCellValueFactory(new PropertyValueFactory("appointmentStartDatetime"));
+        apptEndCol.setCellValueFactory(new PropertyValueFactory("appointmentEndDatetime"));
         apptCustIdCol.setCellValueFactory(new PropertyValueFactory("customerId"));
         apptUserIdCol.setCellValueFactory(new PropertyValueFactory("userId"));
         constructCustomerTable();

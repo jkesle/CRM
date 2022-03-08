@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="473.0" prefWidth="645.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AddCustomerController">
+<AnchorPane prefHeight="473.0" prefWidth="645.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jkesle.crm.controller.AddCustomerController">
     <children>
         <Label alignment="CENTER" layoutX="203.0" layoutY="51.0" prefHeight="34.0" prefWidth="240.0" text="New Customer Information" textFill="#464646">
             <font>
@@ -14,7 +14,7 @@
         <TextField fx:id="addressField" layoutX="248.0" layoutY="160.0" />
         <TextField fx:id="postalField" layoutX="249.0" layoutY="212.0" />
         <TextField fx:id="phoneField" layoutX="249.0" layoutY="261.0" />
-        <ComboBox fx:id="countryBox" layoutX="249.0" layoutY="311.0" onAction="#populateDivisionBox" prefWidth="150.0" promptText="Select Country" />
+        <ComboBox fx:id="countryBox" layoutX="249.0" layoutY="311.0" prefWidth="150.0" promptText="Select Country" />
         <ComboBox fx:id="divisionBox" layoutX="249.0" layoutY="363.0" prefWidth="150.0" promptText="Select State/Province" />
         <Label layoutX="189.0" layoutY="112.0" text="Name">
             <font>
@@ -36,7 +36,7 @@
                 <Font name="System Bold Italic" size="12.0" />
             </font>
         </Label>
-        <Button fx:id="submitBtn" layoutX="188.0" layoutY="425.0" mnemonicParsing="false" onAction="#addCustomer" text="Add New Customer">
+        <Button fx:id="submitBtn" layoutX="188.0" layoutY="425.0" mnemonicParsing="false" text="Add New Customer">
             <font>
                 <Font name="System Bold" size="12.0" />
             </font></Button>
